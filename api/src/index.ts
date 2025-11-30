@@ -6,7 +6,7 @@ import rateLimit from 'express-rate-limit';
 import type { Request, Response } from 'express';
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = Number(process.env.PORT ?? 3000);
 
 // Security middleware
 app.disable('x-powered-by');
