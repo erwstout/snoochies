@@ -1,165 +1,78 @@
-# 🐄 MoobyStack Starter Kit
+# 🐄 Snoochies Starter
 
-### _"I'm not even supposed to be here today!"_
+A small Express + React starter that ships a minimal API and a Vite front-end already wired together. It is meant for quick prototypes or homelab utilities where you want a typed backend and a simple UI without a lot of ceremony.
 
-A lightweight, irreverent, View-Askewniverse-infused starter template
-for spinning up quick Node.js / TypeScript / React projects in your
-homelab, dev box, or whatever server Jay just hotboxed.
+## ✨ What you get
 
-This is your **Quick Stop**:\
-A place to throw APIs, microservices, scripts, utilities, and random
-experiments you'll probably forget about but swear you'll "come back to
-later."
+- **Express API** with Helmet, CORS, rate limiting, and structured logging via Pino.
+- **Typed configuration** validated with Zod.
+- **React + Vite frontend** that calls the API using TanStack Query.
+- Ready-to-run npm scripts for local development, builds, linting, and tests.
 
----
+## 📂 Project layout
 
-## 🎬 What This Thing Is
+- `api/` — Express server code, environment parsing, and helpers.
+- `frontend/` — React app powered by Vite with a simple API message card.
+- `eslint.config.js` and `tsconfig.json` — shared linting and TypeScript configuration.
 
-This repo is a backbone for small-to-medium Node/TS + React/Vite apps.
+## 🚀 Getting started
 
-It includes:
-
-- 🟦 **Node.js + TypeScript**
-- ⚛️ **React + Vite** (optional front-end shell)
-- 🧹 **ESLint + Prettier**
-- 🧪 **Vitest/Jest** (your call)
-- 🗂️ A sensible folder structure
-- 🔧 Reusable scripts for dev, build, lint, etc.
-
-Designed for:
-
-- Homelab utilities\
-- Quick APIs\
-- Microservices\
-- Dashboards\
-- Throwaway experiments\
-- Late-night "what if?" ideas
-
----
-
-## 🏗️ Project Structure
-
-    moobystack/
-    ├── api/            # Express/Node backend (TypeScript)
-    │   ├── src/
-    │   ├── tests/
-    │   └── ...
-    ├── web/            # React front-end via Vite
-    │   ├── src/
-    │   ├── public/
-    │   └── ...
-    ├── scripts/        # automation helpers
-    ├── .eslintrc.cjs
-    ├── tsconfig.json
-    ├── package.json
-    └── README.md
-
----
-
-## 🚀 Getting Started
-
-**1. Clone it**
-
-```sh
-git clone https://github.com/yourname/moobystack.git
-cd moobystack
-```
-
-**2. Install dependencies**
+1. Install dependencies
 
 ```sh
 npm install
 ```
 
-**3. Run dev (API + optional web)**
+2. Create an `.env` file in the repo root to configure the API and optional database values. At minimum, set the port (defaults to 3000) and allowed CORS origins:
+
+```sh
+PORT=3000
+CORS_ORIGINS=http://localhost:5173
+# Optional database settings if you wire up Knex/PG later
+# DATABASE_URL=postgres://user:password@localhost:5432/snoochies
+```
+
+3. Run both the API and frontend in development mode
 
 ```sh
 npm run dev
 ```
 
-**4. Build**
+- API: http://localhost:3000
+- Frontend: http://localhost:5173 (configured to call the API via `VITE_API_URL` if provided)
+
+4. Build for production
 
 ```sh
 npm run build
 ```
 
-**5. Lint**
+5. Lint and test
 
 ```sh
 npm run lint
-```
-
----
-
-## ⚙️ Environment Variables
-
-Create a `.env` file.
-
-Example:
-
-    PORT=3000
-    NODE_ENV=development
-    DATABASE_URL=postgres://clerks_user:password@localhost:5432/quickstop
-    SECRET_KEY=I_AM_THE_MOOBY_MESSIAH
-
-Everything else is up to you --- this is just the foundation.
-
----
-
-## 🤖 Coding Philosophy (Silent Bob's Manifesto)
-
-- Keep it small\
-- Keep it modular\
-- Keep it readable\
-- Keep it fun\
-- Don't break prod\
-- Don't _write_ prod\
-- Don't let Jay near prod (or yer girl)
-
----
-
-## 🧪 Testing
-
-Runs either Vitest or Jest.
-
-```sh
 npm test
 ```
 
-Judges your code harsher than Randal judges customers.
+## 🧭 API overview
 
----
+- `GET /healthz` — liveness check with uptime info.
+- `GET /` — returns the View Askewniverse greeting.
+- `POST /echo` — accepts `{ "message": "text" }` and echoes it back (validated with Zod).
 
-## 🎯 When to Use This Template
+## 🖥️ Frontend overview
 
-- Homelab automation\
-- Personal dashboards\
-- Small APIs\
-- Microservices\
-- CLI tools\
-- Random experiments\
-- Anything quick and dirty you need running now
+The Vite React app displays the API greeting and lets you refresh it. Update `VITE_API_URL` in your `.env` to point at a remote API, or leave it unset to target `http://localhost:3000` during local development.
 
----
+## 🛠️ Useful scripts
 
-## 🚫 When _Not_ to Use It
+- `npm run dev` — run API (`api/src/index.ts`) and frontend together.
+- `npm run build` — compile the API and bundle the frontend.
+- `npm run start` — serve the compiled API from `api/dist`.
+- `npm run lint` — ESLint over `api/src` and `frontend/src`.
+- `npm test` — run linting plus frontend Jest tests.
+- `npm run db:*` — Knex helpers (migrate, rollback, seed) should you connect a database.
 
-- Enterprise software\
-- Huge monorepos\
-- Anything needing top-tier type safety\
-- Clerks III (too sad)
+## 📄 License
 
----
-
-## 🤝 Contributing
-
-PRs welcome.\
-Unless you're Randal.\
-Then no.
-
----
-
-## 📜 License
-
-MIT/whatever.\
-Just don't sell it to Mooby Corp.
+MIT
