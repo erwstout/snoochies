@@ -1,0 +1,39 @@
+{
+  "name": "snoochies",
+  "version": "0.0.1",
+  "description": "Cute kid. He's yours?",
+  "homepage": "https://github.com/erwstout/snoochies#readme",
+  "bugs": {
+    "url": "https://github.com/erwstout/snoochies/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erwstout/snoochies.git"
+  },
+  "license": "MIT",
+  "author": "Eric Stout <ericwstout@gmail.com>",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only --watch src --ignore-watch node_modules src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.10.1",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.1"
+  }
+}
