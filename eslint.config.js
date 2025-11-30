@@ -27,7 +27,7 @@ export default [
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        project: './tsconfig.json',
+        project: './api/tsconfig.json',
         tsconfigRootDir: __dirname,
         sourceType: 'module',
         ecmaVersion: 2020,

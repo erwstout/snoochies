@@ -19,7 +19,7 @@
     "dev:api": "tsx watch api/src/index.ts",
     "dev:frontend": "vite --config frontend/vite.config.ts",
     "build": "npm-run-all build:api build:frontend",
-    "build:api": "tsc -p tsconfig.json",
+    "build:api": "tsc -p api/tsconfig.json",
     "build:frontend": "vite build --config frontend/vite.config.ts",
     "start": "node api/dist/index.js",
     "prepare": "husky install",
