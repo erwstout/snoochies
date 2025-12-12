@@ -52,6 +52,14 @@ export default [
     },
   },
   {
+    files: ['api/src/**/*.test.{ts,tsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
+  },
+  {
     files: ['frontend/src/**/*.{ts,tsx}'],
     languageOptions: {
       parser: tsParser,

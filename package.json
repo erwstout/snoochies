@@ -29,8 +29,9 @@
     "prepare": "husky install",
     "format": "prettier --write .",
     "lint": "eslint \"api/src/**/*.{ts,tsx}\" \"frontend/src/**/*.{ts,tsx}\"",
-    "test": "npm-run-all lint test:frontend",
-    "test:frontend": "jest --config frontend/jest.config.ts --runInBand --passWithNoTests"
+    "test": "npm-run-all lint test:frontend test:api",
+    "test:frontend": "jest --config frontend/jest.config.ts --runInBand --passWithNoTests",
+    "test:api": "NODE_OPTIONS=--experimental-vm-modules jest --config api/jest.config.ts --runInBand --passWithNoTests"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
