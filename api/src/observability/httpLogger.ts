@@ -1,6 +1,6 @@
-import type { IncomingMessage, ServerResponse } from 'node:http';
+import type { IncomingMessage, ServerResponse } from 'http';
 import { randomUUID } from 'node:crypto';
-import pinoHttp, { type HttpLogger, type Options } from 'pino-http';
+import { pinoHttp, type Options } from 'pino-http';
 import { logger } from '@/api/observability/logger.js';
 
 const options: Options = {
@@ -19,4 +19,4 @@ const options: Options = {
     return `request errored: ${err.message ?? 'unknown error'} (${res.statusCode})`;
   },
 };
-export const httpLogger = pinoHttp(options) as HttpLogger<IncomingMessage, ServerResponse>;
+export const httpLogger = pinoHttp(options);

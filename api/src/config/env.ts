@@ -7,9 +7,9 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z
     .string()
+    .default('3000')
     .transform((v) => Number(v))
-    .refine((v) => Number.isFinite(v), 'PORT must be a number')
-    .default('3000'),
+    .refine((v) => Number.isFinite(v), 'PORT must be a number'),
   DATABASE_URL: z.string().url().optional(),
   PGHOST: z.string().optional(),
   PGPORT: z
