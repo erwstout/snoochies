@@ -6,6 +6,7 @@ A small Express + React starter that ships a minimal API and a Vite front-end al
 
 - **Express API** with Helmet, CORS, rate limiting, and structured logging via Pino.
 - **Typed configuration** validated with Zod.
+- **Prisma + Postgres** ready with a starter model and a singleton client helper.
 - **React + Vite frontend** that calls the API using TanStack Query.
 - Ready-to-run npm scripts for local development, builds, linting, and tests.
 
@@ -23,12 +24,12 @@ A small Express + React starter that ships a minimal API and a Vite front-end al
 npm install
 ```
 
-2. Create an `.env` file in the repo root to configure the API and optional database values. At minimum, set the port (defaults to 3000) and allowed CORS origins:
+2. Create an `.env` file in the repo root to configure the API and optional database values. At minimum, set the port (defaults to 3000) and allowed CORS origins (required for cross-origin frontend access). Ports must be numeric and between 1-65535; empty values are rejected.
 
 ```sh
 PORT=3000
 CORS_ORIGINS=http://localhost:5173
-# Optional database settings if you wire up Knex/PG later
+# Optional database settings if you wire up Prisma/Postgres
 # DATABASE_URL=postgres://user:password@localhost:5432/snoochies
 ```
 
@@ -39,7 +40,7 @@ npm run dev
 ```
 
 - API: http://localhost:3000
-- Frontend: http://localhost:5173 (configured to call the API via `VITE_API_URL` if provided)
+- Frontend: http://localhost:5173 (set `VITE_API_URL` to point at the API if it is on a different origin)
 
 4. Build for production
 
@@ -62,16 +63,25 @@ npm test
 
 ## 🖥️ Frontend overview
 
-The Vite React app displays the API greeting and lets you refresh it. Update `VITE_API_URL` in your `.env` to point at a remote API, or leave it unset to target `http://localhost:3000` during local development.
+The Vite React app displays the API greeting and lets you refresh it. Set `VITE_API_URL` in your `.env` to point at a remote API or a locally running API on a different port (e.g., `http://localhost:3000`). If unset, the frontend will call the same origin it is served from (useful in production when API and frontend are hosted together).
+
+## 🗄️ Database (Prisma)
+
+- Schema lives in `prisma/schema.prisma` with a starter `Message` model.
+- Generate the client: `npm run db:generate`.
+- Develop migrations: `npm run db:migrate` (creates migrations in `prisma/migrations`).
+- Deploy migrations in CI/production: `npm run db:deploy`.
+- Inspect data: `npm run db:studio`.
 
 ## 🛠️ Useful scripts
 
 - `npm run dev` — run API (`api/src/index.ts`) and frontend together.
 - `npm run build` — compile the API and bundle the frontend.
 - `npm run start` — serve the compiled API from `api/dist`.
+- `npm run typecheck` — run TypeScript type checks for API and frontend.
 - `npm run lint` — ESLint over `api/src` and `frontend/src`.
 - `npm test` — run linting plus frontend Jest tests.
-- `npm run db:*` — Knex helpers (migrate, rollback, seed) should you connect a database.
+- `npm run db:*` — Prisma helpers (generate client, migrate, deploy, studio).
 
 ## 📄 License
 

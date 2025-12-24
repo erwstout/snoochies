@@ -1,26 +1,21 @@
-import { z } from 'zod';
 import dotenv from 'dotenv';
+import { z } from 'zod';
 
 dotenv.config();
 
+const portBase = z.preprocess((val) => {
+  if (val === undefined || val === null) return undefined;
+  if (typeof val === 'string' && val.trim() === '') return undefined;
+  return val;
+}, z.coerce.number().int().min(1).max(65535));
+
+const coercePort = (defaultValue?: number) =>
+  defaultValue !== undefined ? portBase.default(defaultValue) : portBase;
+
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-  PORT: z
-    .string()
-    .default('3000')
-    .transform((v) => Number(v))
-    .refine((v) => Number.isFinite(v), 'PORT must be a number'),
+  PORT: coercePort(3000),
   DATABASE_URL: z.string().url().optional(),
-  PGHOST: z.string().optional(),
-  PGPORT: z
-    .string()
-    .transform((v) => Number(v))
-    .refine((v) => Number.isFinite(v), 'PGPORT must be a number')
-    .optional(),
-  PGUSER: z.string().optional(),
-  PGPASSWORD: z.string().optional(),
-  PGDATABASE: z.string().optional(),
-  PGSSL: z.string().optional(),
   VITE_API_URL: z.string().optional(),
   CORS_ORIGINS: z.string().optional(),
 });

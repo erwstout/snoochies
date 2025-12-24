@@ -1,45 +1,15 @@
 import express from 'express';
-import helmet from 'helmet';
-import cors from 'cors';
-import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
-import type { Request, Response, NextFunction } from 'express';
-import { env } from '@/api/config/env.js';
-import { httpLogger } from '@/api/observability/httpLogger.js';
-import { logger } from '@/api/observability/logger.js';
+import type { Request, Response } from 'express';
 import { validateBody } from '@/api/utils/validate.js';
+import { getValidatedBody } from '@/api/utils/getValidatedBody.js';
+import { setupMiddleware } from '@/api/middleware.js';
+import { errorHandler } from '@/api/utils/errorHandler.js';
 
 const app = express();
+app.set('trust proxy', true);
 
-const allowedOrigins = (env.CORS_ORIGINS ?? '')
-  .split(',')
-  .map((o) => o.trim())
-  .filter(Boolean);
-
-// Security middleware
-app.disable('x-powered-by');
-app.use(
-  helmet({
-    contentSecurityPolicy: env.NODE_ENV === 'production' ? undefined : false,
-  }),
-);
-app.use(
-  cors({
-    origin: allowedOrigins.length > 0 ? allowedOrigins : '*',
-  }),
-);
-app.use(httpLogger);
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per window
-  standardHeaders: true,
-  legacyHeaders: false,
-  skip: (req) => req.path === '/healthz',
-});
-app.use(limiter);
-
-app.use(express.json({ limit: '1mb' }));
+setupMiddleware(app);
 
 app.get('/healthz', (_req: Request, res: Response) => {
   res.status(200).json({ status: 'ok', uptime: process.uptime() });
@@ -54,15 +24,14 @@ const echoSchema = z.object({
 });
 
 app.post('/echo', validateBody(echoSchema), (req: Request, res: Response) => {
-  const body = (req as Request & { validatedBody: z.infer<typeof echoSchema> }).validatedBody;
+  const body = getValidatedBody<typeof echoSchema>(req);
   res.json({ echoed: body.message });
 });
 
-// Error handler
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
-  logger.error({ err }, 'Unhandled error');
-  res.status(500).json({ error: 'Internal server error' });
+app.use((_req: Request, res: Response) => {
+  res.status(404).json({ error: 'Not found' });
 });
+
+app.use(errorHandler);
 
 export { app };

@@ -1,28 +1,16 @@
 import { useMemo } from 'react';
 import type { CSSProperties } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { getApiBase } from './utils/getApiBase';
 
 interface ApiResponse {
   message: string;
 }
 
-function resolveApiUrl(env: unknown): string {
-  if (
-    typeof env === 'object' &&
-    env !== null &&
-    'VITE_API_URL' in env &&
-    typeof (env as { VITE_API_URL: unknown }).VITE_API_URL === 'string' &&
-    (env as { VITE_API_URL: string }).VITE_API_URL.length > 0
-  ) {
-    return (env as { VITE_API_URL: string }).VITE_API_URL;
-  }
-  return 'http://localhost:3000';
-}
-
-const API_URL = resolveApiUrl(import.meta.env);
-
 function MessageCard() {
-  const url = useMemo(() => `${API_URL}/`, []);
+  const apiBase = getApiBase();
+  const url = useMemo(() => new URL('/', apiBase).toString(), [apiBase]);
+
   const { data, isLoading, isError, error, refetch, isFetching } = useQuery<ApiResponse>({
     queryKey: ['root-message'],
     queryFn: async () => {

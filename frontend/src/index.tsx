@@ -5,6 +5,7 @@ import App from './App';
 
 const queryClient = new QueryClient();
 const container = document.getElementById('root');
+
 if (!container) {
   throw new Error('Root container missing');
 }
