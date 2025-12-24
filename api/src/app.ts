@@ -11,22 +11,26 @@ app.set('trust proxy', true);
 
 setupMiddleware(app);
 
-app.get('/healthz', (_req: Request, res: Response) => {
+export const healthzHandler = (_req: Request, res: Response): void => {
   res.status(200).json({ status: 'ok', uptime: process.uptime() });
-});
+};
+app.get('/healthz', healthzHandler);
 
-app.get('/', (_req: Request, res: Response) => {
+export const rootHandler = (_req: Request, res: Response): void => {
   res.json({ message: "I'm not even supposed to be here today!" });
-});
+};
+app.get('/', rootHandler);
 
-const echoSchema = z.object({
+export const echoSchema = z.object({
   message: z.string().min(1),
 });
 
-app.post('/echo', validateBody(echoSchema), (req: Request, res: Response) => {
+export const echoHandler = (req: Request, res: Response): void => {
   const body = getValidatedBody<typeof echoSchema>(req);
   res.json({ echoed: body.message });
-});
+};
+
+app.post('/echo', validateBody(echoSchema), echoHandler);
 
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ error: 'Not found' });

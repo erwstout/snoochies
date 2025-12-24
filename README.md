@@ -81,7 +81,7 @@ The Vite React app displays the API greeting and lets you refresh it. Set `VITE_
 - `npm run start` — serve the compiled API from `api/dist`.
 - `npm run typecheck` — run TypeScript type checks for API and frontend.
 - `npm run lint` — ESLint over `api/src` and `frontend/src`.
-- `npm test` — run linting plus frontend Jest tests.
+- `npm test` — run linting plus frontend Jest tests. API tests run handlers directly (no network sockets) for fast, isolated verification.
 - `npm run db:*` — Prisma helpers (generate client, migrate, deploy, studio).
 
 ## 📄 License

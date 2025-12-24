@@ -103,4 +103,21 @@ export default [
       },
     },
   },
+  {
+    files: ['frontend/src/**/*.test.{ts,tsx}'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        project: './frontend/tsconfig.json',
+        tsconfigRootDir: __dirname,
+        sourceType: 'module',
+        ecmaVersion: 2020,
+        ecmaFeatures: { jsx: true },
+      },
+      globals: {
+        ...globals.jest,
+        ...globals.browser,
+      },
+    },
+  },
 ];
