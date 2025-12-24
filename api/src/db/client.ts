@@ -1,15 +1,16 @@
-import { knex, type Knex } from 'knex';
-import { knexConfig } from '@/api/db/config.js';
+import { PrismaClient } from '@prisma/client';
 
-let client: Knex | null = null;
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-export const getDb = (): Knex => {
-  client ??= knex(knexConfig);
-  return client;
+export const getDb = (): PrismaClient => {
+  if (!globalForPrisma.prisma) {
+    globalForPrisma.prisma = new PrismaClient();
+  }
+  return globalForPrisma.prisma;
 };
 
 export const closeDb = async (): Promise<void> => {
-  if (!client) return;
-  await client.destroy();
-  client = null;
+  if (!globalForPrisma.prisma) return;
+  await globalForPrisma.prisma.$disconnect();
+  globalForPrisma.prisma = undefined;
 };
