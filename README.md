@@ -30,7 +30,7 @@ npm install
 PORT=3000
 CORS_ORIGINS=http://localhost:5173
 # Optional database settings if you wire up Prisma/Postgres
-# DATABASE_URL=postgres://user:password@localhost:5432/snoochies
+# DATABASE_URL=postgresql://user:password@localhost:5432/snoochies
 ```
 
 3. Run both the API and frontend in development mode
@@ -68,10 +68,11 @@ The Vite React app displays the API greeting and lets you refresh it. Set `VITE_
 ## 🗄️ Database (Prisma)
 
 - Schema lives in `prisma/schema.prisma` with a starter `Message` model.
-- Generate the client: `npm run db:generate`.
+- Prisma client is generated on install (`npm install` / `npm ci`), but you can rerun via `npm run db:generate`.
 - Develop migrations: `npm run db:migrate` (creates migrations in `prisma/migrations`).
 - Deploy migrations in CI/production: `npm run db:deploy`.
 - Inspect data: `npm run db:studio`.
+- `DATABASE_URL` defaults to `postgresql://postgres:postgres@localhost:5432/snoochies`; update it when you connect a real database.
 
 ## 🛠️ Useful scripts
 

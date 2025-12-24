@@ -24,6 +24,7 @@
     "typecheck": "npm-run-all typecheck:api typecheck:frontend",
     "typecheck:api": "tsc -p api/tsconfig.json --noEmit",
     "typecheck:frontend": "tsc -p frontend/tsconfig.json --noEmit",
+    "postinstall": "prisma generate",
     "db:generate": "prisma generate --schema prisma/schema.prisma",
     "db:migrate": "prisma migrate dev --schema prisma/schema.prisma",
     "db:deploy": "prisma migrate deploy --schema prisma/schema.prisma",

@@ -15,7 +15,7 @@ const coercePort = (defaultValue?: number) =>
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: coercePort(3000),
-  DATABASE_URL: z.string().url().optional(),
+  DATABASE_URL: z.string().url().default('postgresql://postgres:postgres@localhost:5432/snoochies'),
   VITE_API_URL: z.string().optional(),
   CORS_ORIGINS: z.string().optional(),
 });
