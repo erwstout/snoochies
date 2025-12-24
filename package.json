@@ -16,7 +16,7 @@
   "main": "api/dist/index.js",
   "scripts": {
     "dev": "npm-run-all -p dev:api dev:frontend",
-    "dev:api": "tsx watch api/src/index.ts",
+    "dev:api": "cd api && tsx watch src/index.ts",
     "dev:frontend": "vite --config frontend/vite.config.ts",
     "build": "npm-run-all build:api build:frontend",
     "build:api": "tsc -p api/tsconfig.json && tsc-alias -p api/tsconfig.json",
