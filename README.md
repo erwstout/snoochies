@@ -65,6 +65,46 @@ npm test
 
 The Vite React app displays the API greeting and lets you refresh it. Set `VITE_API_URL` in your `.env` to point at a remote API or a locally running API on a different port (e.g., `http://localhost:3000`). If unset, the frontend will call the same origin it is served from (useful in production when API and frontend are hosted together).
 
+## 🧑‍💻 Local development
+
+When working on this template locally (not in the eventual `npx` scaffold), you can spin up a throwaway Postgres instance via Docker Compose to exercise Prisma and API changes without touching your personal databases.
+
+1. Ensure Docker is running, then start the database
+
+```sh
+docker compose -f docker-compose.dev.yml up -d
+```
+
+This launches Postgres 16 on `localhost:5432` with user/password `postgres` and database `snoochies_dev` (data is persisted to a local Docker volume).
+
+2. Point your env at the local DB
+
+```sh
+echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/snoochies_dev" >> .env
+```
+
+3. Generate Prisma client and apply migrations as needed
+
+```sh
+npm run db:generate
+npm run db:migrate   # creates prisma/migrations entries for local dev
+```
+
+4. Run the app or tests as usual
+
+```sh
+npm run dev
+npm test
+```
+
+5. Tear down when done (data persists in the volume; use `docker volume rm snoochies_postgres_data` to wipe)
+
+```sh
+docker compose -f docker-compose.dev.yml down
+```
+
+This Compose file is for contributor/local testing only and is not intended to ship with any `npx`-delivered starter output.
+
 ## 🗄️ Database (Prisma)
 
 - Schema lives in `prisma/schema.prisma` with a starter `Message` model.
