@@ -11,16 +11,21 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false } },
 });
 
-const mockFetch = jest.fn();
+const mockFetch = jest.fn<typeof fetch>();
 
 beforeEach(() => {
   mockFetch.mockResolvedValue({
     ok: true,
     // eslint-disable-next-line @typescript-eslint/require-await
     json: async () => ({ message: 'Test message' }),
-  });
-  (globalThis as typeof globalThis & { fetch: typeof fetch }).fetch = mockFetch;
+  } as unknown as Response);
+  (globalThis as typeof globalThis & { fetch: typeof fetch }).fetch =
+    mockFetch as unknown as typeof fetch;
   queryClient.clear();
+});
+
+afterEach(() => {
+  mockFetch.mockReset();
 });
 
 describe('App', () => {
