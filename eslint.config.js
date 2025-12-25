@@ -16,11 +16,41 @@ export default [
       'dist',
       'api/dist',
       'frontend/dist',
+      'packages/cli/dist',
       'node_modules',
       'coverage',
       '.tmp',
       '.nyc_output',
     ],
+  },
+  {
+    files: ['packages/cli/src/**/*.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        project: './packages/cli/tsconfig.json',
+        tsconfigRootDir: __dirname,
+        sourceType: 'module',
+        ecmaVersion: 2020,
+      },
+      globals: {
+        ...globals.node,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+      prettier: prettierPlugin,
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      ...tsPlugin.configs['recommended-type-checked'].rules,
+      ...tsPlugin.configs['stylistic-type-checked'].rules,
+      ...prettierPlugin.configs.recommended.rules,
+      'prettier/prettier': 'error',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-misused-promises': 'off',
+      '@typescript-eslint/no-floating-promises': 'off',
+    },
   },
   {
     files: ['api/src/**/*.{ts,tsx}'],
