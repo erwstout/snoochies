@@ -1,0 +1,17 @@
+node_modules
+coverage
+.nyc_output
+.tmp
+logs
+*.log
+
+# Build artifacts
+api/dist
+frontend/dist
+dist
+!packages/cli/dist
+
+# Dev-only
+.github
+.husky
+docker-compose.dev.yml

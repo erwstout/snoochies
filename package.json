@@ -14,6 +14,9 @@
   "author": "Eric Stout <ericwstout@gmail.com>",
   "type": "module",
   "main": "api/dist/index.js",
+  "bin": {
+    "get-snoochies": "packages/cli/dist/index.js"
+  },
   "engines": {
     "node": ">=24.11.1"
   },
@@ -21,11 +24,13 @@
     "dev": "npm-run-all -p dev:api dev:frontend",
     "dev:api": "cd api && tsx watch src/index.ts",
     "dev:frontend": "vite --config frontend/vite.config.ts",
-    "build": "npm-run-all build:api build:frontend",
+    "build": "npm-run-all build:api build:frontend build:cli",
     "build:api": "tsc -p api/tsconfig.json && tsc-alias -p api/tsconfig.json",
+    "build:cli": "tsc -p packages/cli/tsconfig.json",
     "build:frontend": "vite build --config frontend/vite.config.ts",
-    "typecheck": "npm-run-all typecheck:api typecheck:frontend",
+    "typecheck": "npm-run-all typecheck:api typecheck:frontend typecheck:cli",
     "typecheck:api": "tsc -p api/tsconfig.json --noEmit",
+    "typecheck:cli": "tsc -p packages/cli/tsconfig.json --noEmit",
     "typecheck:frontend": "tsc -p frontend/tsconfig.json --noEmit",
     "postinstall": "prisma generate",
     "db:generate": "prisma generate --schema prisma/schema.prisma",
@@ -34,8 +39,9 @@
     "db:studio": "prisma studio --schema prisma/schema.prisma",
     "start": "node api/dist/index.js",
     "prepare": "husky install",
+    "prepack": "npm run build:cli",
     "format": "prettier --write .",
-    "lint": "eslint \"api/src/**/*.{ts,tsx}\" \"frontend/src/**/*.{ts,tsx}\"",
+    "lint": "eslint \"api/src/**/*.{ts,tsx}\" \"frontend/src/**/*.{ts,tsx}\" \"packages/cli/src/**/*.ts\"",
     "test": "npm-run-all lint test:frontend test:api",
     "test:frontend": "jest --config frontend/jest.config.ts --runInBand --passWithNoTests",
     "test:api": "NODE_OPTIONS=--experimental-vm-modules jest --config api/jest.config.ts --runInBand --passWithNoTests"
