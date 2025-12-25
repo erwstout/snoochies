@@ -16,6 +16,22 @@ export const updatePackageManifest = async (
   manifest.version = '0.1.0';
   delete manifest.bin;
 
+  const scripts = manifest.scripts as Record<string, unknown> | undefined;
+
+  if (scripts) {
+    delete scripts['build:cli'];
+    delete scripts['typecheck:cli'];
+    delete scripts.prepack;
+
+    if (scripts.build === 'npm-run-all build:api build:frontend build:cli') {
+      scripts.build = 'npm-run-all build:api build:frontend';
+    }
+
+    if (scripts.typecheck === 'npm-run-all typecheck:api typecheck:frontend typecheck:cli') {
+      scripts.typecheck = 'npm-run-all typecheck:api typecheck:frontend';
+    }
+  }
+
   const formatted = `${JSON.stringify(manifest, null, 2)}\n`;
   await fs.writeFile(manifestPath, formatted, 'utf8');
 };
