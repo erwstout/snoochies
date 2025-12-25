@@ -64,6 +64,7 @@ const promptForPackageManager = async (): Promise<PackageManager> => {
     options: [
       { value: 'npm', label: formatPackageManagerLabel('npm'), hint: 'Default' },
       { value: 'pnpm', label: formatPackageManagerLabel('pnpm'), hint: 'Faster installs' },
+      { value: 'yarn', label: formatPackageManagerLabel('yarn'), hint: 'Plug-and-play ready' },
     ],
     initialValue: 'npm',
   });
