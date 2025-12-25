@@ -1,5 +1,9 @@
 export const DEFAULT_PROJECT_NAME = 'snoochies-starter';
 
+export const DEFAULT_LICENSE = 'MIT';
+
+export const DEFAULT_PACKAGE_MANAGER = 'npm';
+
 export const REPO_ONLY_PATHS = [
   '.git',
   '.github',
@@ -14,5 +18,3 @@ export const REPO_ONLY_PATHS = [
   '.nyc_output',
   '.tmp',
 ];
-
-export const INSTALL_COMMAND = 'npm install';

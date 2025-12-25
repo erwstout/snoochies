@@ -89,6 +89,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.90.11",
     "@prisma/client": "^6.2.1",
+    "@clack/prompts": "^0.10.0",
     "@types/pino-http": "^5.8.4",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
