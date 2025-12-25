@@ -15,7 +15,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,
-    "types": ["vite/client", "jest"]
+    "types": ["vite/client", "jest", "@testing-library/jest-dom"]
   },
   "include": ["src"],
   "exclude": ["dist", "node_modules"]

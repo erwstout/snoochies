@@ -1,82 +1,26 @@
 import { useMemo } from 'react';
 import type { CSSProperties } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMessagesQuery, useRootMessageQuery } from './api/queries';
 import { getApiBase } from './utils/getApiBase';
-
-interface ApiResponse {
-  message: string;
-}
-
-interface Message {
-  id: number;
-  text: string;
-  createdAt: string;
-}
 
 function MessageCard() {
   const apiBase = getApiBase();
   const url = useMemo(() => new URL('/', apiBase).toString(), [apiBase]);
-  const messagesUrl = useMemo(() => new URL('/messages', apiBase).toString(), [apiBase]);
 
-  const { data, isLoading, isError, error, refetch, isFetching } = useQuery<ApiResponse>({
-    queryKey: ['root-message'],
-    queryFn: async () => {
-      const res = await fetch(url);
-      if (!res.ok) {
-        throw new Error(`Request failed with ${res.status}`);
-      }
-      const data: unknown = await res.json();
-      if (
-        !data ||
-        typeof data !== 'object' ||
-        !('message' in data) ||
-        typeof data.message !== 'string'
-      ) {
-        throw new Error('Invalid response shape');
-      }
-      return { message: data.message };
-    },
-  });
-
-  const messagesQuery = useQuery<{ messages: Message[] }>({
-    queryKey: ['messages'],
-    queryFn: async () => {
-      const res = await fetch(messagesUrl);
-      if (!res.ok) throw new Error(`Request failed with ${res.status}`);
-      const data: unknown = await res.json();
-      if (!data || typeof data !== 'object' || !('messages' in data)) {
-        throw new Error('Invalid response shape');
-      }
-      return {
-        messages: Array.isArray((data as { messages: unknown }).messages)
-          ? ((data as { messages: unknown[] }).messages ?? [])
-              .filter(
-                (m) =>
-                  m &&
-                  typeof m === 'object' &&
-                  'text' in m &&
-                  typeof (m as { text: unknown }).text === 'string',
-              )
-              .map((m) => ({
-                id: typeof (m as { id?: number }).id === 'number' ? (m as { id: number }).id : 0,
-                text: (m as { text: string }).text,
-                createdAt:
-                  typeof (m as { createdAt?: string }).createdAt === 'string'
-                    ? (m as { createdAt: string }).createdAt
-                    : '',
-              }))
-          : [],
-      };
-    },
-  });
+  const rootQuery = useRootMessageQuery();
+  const messagesQuery = useMessagesQuery();
 
   return (
     <section style={styles.card}>
       <div style={styles.header}>
         <h1 style={styles.title}>MoobyStack Frontend</h1>
         <div style={styles.headerActions}>
-          <button style={styles.button} onClick={() => refetch()} disabled={isFetching}>
-            {isFetching ? 'Refreshing...' : 'Refresh'}
+          <button
+            style={styles.button}
+            onClick={() => rootQuery.refetch()}
+            disabled={rootQuery.isFetching}
+          >
+            {rootQuery.isFetching ? 'Refreshing...' : 'Refresh'}
           </button>
           <button
             style={styles.secondaryButton}
@@ -87,15 +31,16 @@ function MessageCard() {
           </button>
         </div>
       </div>
-      {isLoading && <p style={styles.muted}>Loading message from API…</p>}
-      {isError && (
+      {rootQuery.isLoading && <p style={styles.muted}>Loading message from API…</p>}
+      {rootQuery.isError && (
         <p style={{ ...styles.muted, color: '#c0392b' }}>
-          Could not load message: {error instanceof Error ? error.message : String(error)}
+          Could not load message:{' '}
+          {rootQuery.error instanceof Error ? rootQuery.error.message : String(rootQuery.error)}
         </p>
       )}
-      {data && (
+      {rootQuery.data && (
         <p style={styles.message}>
-          <span style={styles.label}>API says:</span> {data.message}
+          <span style={styles.label}>API says:</span> {rootQuery.data.message}
         </p>
       )}
       <div style={styles.list}>
