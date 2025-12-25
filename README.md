@@ -29,6 +29,8 @@ npx get-snoochies my-snoochies-app
 - Installs dependencies automatically (pass `--no-install` to skip).
 - Updates `package.json` and `package-lock.json` to match your chosen project name.
 
+See [docs/scaffold.md](docs/scaffold.md) for a full walkthrough of the prompts, defaults, emitted files, and package manager choices when running `npx get-snoochies`.
+
 ## 🚀 Getting started
 
 1. Install dependencies
