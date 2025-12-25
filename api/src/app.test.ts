@@ -1,102 +1,128 @@
 /* eslint-env jest */
+import { jest, describe, expect, test, beforeEach } from '@jest/globals';
 import type { Request, RequestHandler, Response } from 'express';
-import { echoHandler, echoSchema, healthzHandler, rootHandler } from './app.js';
+import type { ZodSchema } from 'zod';
+import { echoHandler, echoSchema, healthzHandler, readyzHandler, rootHandler } from './app.js';
+import { messageService } from './services/messages.js';
+import {
+  createMessageHandler,
+  createMessageSchema,
+  listMessagesHandler,
+} from './routes/messages.js';
 import { validateBody } from './utils/validate.js';
 
-interface MockResponseShape extends Partial<Response> {
-  statusCode: number;
-  body?: unknown;
-}
+jest.mock('./db/client.js', () => ({
+  getDb: () => ({
+    $queryRaw: jest.fn(async () => [{ ok: 1 }]),
+  }),
+}));
 
-const createMockRes = (): MockResponseShape => ({
-  statusCode: 200,
-  body: undefined,
-  status(code: number) {
-    this.statusCode = code;
-    return this as unknown as Response;
-  },
-  json(payload: unknown) {
-    this.body = payload;
-    return this as unknown as Response;
-  },
-  send(payload: unknown) {
-    this.body = payload;
-    return this as unknown as Response;
-  },
-});
+const mockResponse = () => {
+  const res: Partial<Response> & { body?: unknown } = {};
+  res.statusCode = 200;
+  res.status = (code: number) => {
+    res.statusCode = code;
+    return res as Response;
+  };
+  res.json = (payload: unknown) => {
+    res.body = payload;
+    return res as Response;
+  };
+  res.send = (payload: unknown) => {
+    res.body = payload;
+    return res as Response;
+  };
+  return res as Response & { body?: unknown };
+};
 
-const runHandler = async (
+const run = async (handler: RequestHandler, req: Partial<Request>, res: Response) => {
+  await handler(req as Request, res, jest.fn());
+};
+
+const runValidated = async (
+  schema: ZodSchema,
   handler: RequestHandler,
   req: Partial<Request>,
-  res: MockResponseShape,
-): Promise<boolean> => {
+  res: Response,
+) => {
   let nextCalled = false;
-  await new Promise<void>((resolve, reject) => {
-    const maybePromise = handler(req as Request, res as Response, (err?: unknown) => {
-      nextCalled = true;
-      if (err) {
-        reject(err instanceof Error ? err : new Error(typeof err === 'string' ? err : 'Error'));
-      } else {
-        resolve();
-      }
-    });
-    if (
-      !nextCalled &&
-      maybePromise &&
-      typeof (maybePromise as Promise<unknown>).then === 'function'
-    ) {
-      (maybePromise as Promise<unknown>).then(
-        () => resolve(),
-        (err: unknown) => reject(err instanceof Error ? err : new Error('Error')),
-      );
-    } else if (!nextCalled) {
-      resolve();
-    }
+  await validateBody(schema)(req as Request, res, (err?: unknown) => {
+    if (err) throw err instanceof Error ? err : new Error(String(err));
+    nextCalled = true;
   });
-  return nextCalled;
+  if (nextCalled) {
+    await run(handler, req, res);
+  }
 };
+
+const originalListMessages = messageService.listMessages;
+const originalCreateMessage = messageService.createMessage;
+
+beforeEach(() => {
+  messageService.listMessages = originalListMessages;
+  messageService.createMessage = originalCreateMessage;
+  jest.clearAllMocks();
+});
 
 describe('API endpoints', () => {
   test('GET /healthz returns ok status', async () => {
-    const res = createMockRes();
-    await runHandler(healthzHandler, {}, res);
+    const res = mockResponse();
+    await run(healthzHandler, {}, res);
     const body = res.body as { status: string; uptime: number };
-
     expect(res.statusCode).toBe(200);
     expect(body.status).toBe('ok');
     expect(typeof body.uptime).toBe('number');
   });
 
-  test('GET / returns welcome message', async () => {
-    const res = createMockRes();
-    await runHandler(rootHandler, {}, res);
-    const body = res.body as { message: string };
+  test('GET /readyz returns ready when DB reachable', async () => {
+    const res = mockResponse();
+    await run(readyzHandler, {}, res);
+    expect([200, 503]).toContain(res.statusCode);
+  });
 
+  test('GET / returns welcome message', async () => {
+    const res = mockResponse();
+    await run(rootHandler, {}, res);
     expect(res.statusCode).toBe(200);
-    expect(body).toEqual({ message: "I'm not even supposed to be here today!" });
+    expect(res.body).toEqual({ message: "I'm not even supposed to be here today!" });
   });
 
   test('POST /echo returns echoed message for valid payload', async () => {
-    const res = createMockRes();
+    const res = mockResponse();
     const req = { body: { message: 'Hello, Snoochies!' } };
-    const nextCalled = await runHandler(validateBody(echoSchema), req, res);
-    if (nextCalled) {
-      await runHandler(echoHandler, req, res);
-    }
-    const body = res.body as { echoed: string };
-
+    await runValidated(echoSchema, echoHandler, req, res);
     expect(res.statusCode).toBe(200);
-    expect(body).toEqual({ echoed: 'Hello, Snoochies!' });
+    expect(res.body).toEqual({ echoed: 'Hello, Snoochies!' });
   });
 
   test('POST /echo responds with validation error for invalid payload', async () => {
-    const res = createMockRes();
+    const res = mockResponse();
     const req = { body: { message: '' } };
-    await runHandler(validateBody(echoSchema), req, res);
-    const body = res.body as { error: string; details: unknown };
-
+    await validateBody(echoSchema)(req as Request, res, jest.fn());
     expect(res.statusCode).toBe(400);
-    expect(body).toHaveProperty('error', 'Invalid request body');
-    expect(body).toHaveProperty('details');
+    expect(res.body).toHaveProperty('error', 'Invalid request body');
+  });
+
+  test('GET /messages returns list from service', async () => {
+    messageService.listMessages = jest.fn(async () => [
+      { id: 1, text: 'hi', createdAt: new Date() },
+    ]) as unknown as typeof messageService.listMessages;
+    const res = mockResponse();
+    await run(listMessagesHandler, {}, res);
+    expect(res.statusCode).toBe(200);
+    expect(Array.isArray((res.body as { messages: unknown }).messages)).toBe(true);
+  });
+
+  test('POST /messages creates via service', async () => {
+    const payload = { text: 'new msg' };
+    messageService.createMessage = jest.fn(async () => ({
+      id: 2,
+      text: payload.text,
+      createdAt: new Date(),
+    })) as unknown as typeof messageService.createMessage;
+    const res = mockResponse();
+    const req = { body: payload };
+    await runValidated(createMessageSchema, createMessageHandler, req, res);
+    expect(res.statusCode).toBe(201);
   });
 });

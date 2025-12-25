@@ -58,8 +58,11 @@ npm test
 ## 🧭 API overview
 
 - `GET /healthz` — liveness check with uptime info.
+- `GET /readyz` — readiness (returns 200 if DB is reachable, 503 otherwise).
 - `GET /` — returns the View Askewniverse greeting.
 - `POST /echo` — accepts `{ "message": "text" }` and echoes it back (validated with Zod).
+- `GET /messages` — returns messages from Prisma.
+- `POST /messages` — create a message with `{ "text": "..." }` (Prisma-backed example).
 
 ## 🖥️ Frontend overview
 
@@ -88,6 +91,7 @@ echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/snoochies_dev" 
 ```sh
 npm run db:generate
 npm run db:migrate   # creates prisma/migrations entries for local dev
+npm run db:seed      # optional: seed sample data
 ```
 
 4. Run the app or tests as usual
@@ -121,8 +125,24 @@ This Compose file is for contributor/local testing only and is not intended to s
 - `npm run start` — serve the compiled API from `api/dist`.
 - `npm run typecheck` — run TypeScript type checks for API and frontend.
 - `npm run lint` — ESLint over `api/src` and `frontend/src`.
-- `npm test` — run linting plus frontend Jest tests. API tests run handlers directly (no network sockets) for fast, isolated verification.
+- `npm test` — run linting plus tests (frontend uses Vitest; API uses Jest with handler-level tests).
 - `npm run db:*` — Prisma helpers (generate client, migrate, deploy, studio).
+- Node version: >= 24.11.1 (see `.nvmrc` for local use)
+
+## 🗄️ Database (Prisma)
+
+- Schema lives in `prisma/schema.prisma` with a starter `Message` model.
+- Prisma client is generated on install (`npm install` / `npm ci`), but you can rerun via `npm run db:generate`.
+- Develop migrations: `npm run db:migrate` (creates migrations in `prisma/migrations`).
+- Deploy migrations in CI/production: `npm run db:deploy`.
+- Inspect data: `npm run db:studio`.
+- `DATABASE_URL` defaults to `postgresql://postgres:postgres@localhost:5432/snoochies`; update it when you connect a real database.
+- Seed sample data: `npm run db:seed`.
+
+## 📦 Scaffold vs. repo-only assets
+
+- Shipped in `npx` starter: API + frontend code, Prisma schema, scripts, tests.
+- Repo-only (developer conveniences): `docker-compose.dev.yml`, release workflow, Dependabot config, and other CI/pipeline wiring. These are for maintaining the template and won’t be emitted in generated apps.
 
 ## 📄 License
 
