@@ -1,13 +1,17 @@
 import { spawn } from 'node:child_process';
 
-import { INSTALL_COMMAND } from './constants.js';
 import { logStep } from './logger.js';
+import { getInstallCommand, PackageManager } from './package-manager.js';
 
-export const installDependencies = async (targetPath: string): Promise<void> => {
-  logStep(`Installing dependencies with \`${INSTALL_COMMAND}\`...`);
+export const installDependencies = async (
+  targetPath: string,
+  packageManager: PackageManager,
+): Promise<void> => {
+  const installCommand = getInstallCommand(packageManager);
+  logStep(`Installing dependencies with \`${installCommand}\`...`);
 
   await new Promise<void>((resolve, reject) => {
-    const [command, ...args] = INSTALL_COMMAND.split(' ');
+    const [command, ...args] = installCommand.split(' ');
     const child = spawn(command, args, {
       cwd: targetPath,
       stdio: 'inherit',
