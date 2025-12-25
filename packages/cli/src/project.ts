@@ -4,6 +4,17 @@ import path from 'node:path';
 import { DEFAULT_PROJECT_NAME } from './constants.js';
 import { isEnoentError, isErrnoException } from './error-guards.js';
 
+export const normalizePackageName = (value: string): string => {
+  const slug = value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/-{2,}/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  return slug.length > 0 ? slug : DEFAULT_PROJECT_NAME;
+};
+
 export const updatePackageManifest = async (
   projectPath: string,
   projectName: string,
@@ -15,22 +26,6 @@ export const updatePackageManifest = async (
   manifest.name = normalizePackageName(projectName);
   manifest.version = '0.1.0';
   delete manifest.bin;
-
-  const scripts = manifest.scripts as Record<string, unknown> | undefined;
-
-  if (scripts) {
-    delete scripts['build:cli'];
-    delete scripts['typecheck:cli'];
-    delete scripts.prepack;
-
-    if (scripts.build === 'npm-run-all build:api build:frontend build:cli') {
-      scripts.build = 'npm-run-all build:api build:frontend';
-    }
-
-    if (scripts.typecheck === 'npm-run-all typecheck:api typecheck:frontend typecheck:cli') {
-      scripts.typecheck = 'npm-run-all typecheck:api typecheck:frontend';
-    }
-  }
 
   const formatted = `${JSON.stringify(manifest, null, 2)}\n`;
   await fs.writeFile(manifestPath, formatted, 'utf8');
@@ -61,15 +56,4 @@ export const updatePackageLock = async (
 
     throw unknownError;
   }
-};
-
-export const normalizePackageName = (value: string): string => {
-  const slug = value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9-]+/g, '-')
-    .replace(/-{2,}/g, '-')
-    .replace(/^-+|-+$/g, '');
-
-  return slug.length > 0 ? slug : DEFAULT_PROJECT_NAME;
 };

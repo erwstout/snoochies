@@ -7,6 +7,15 @@ export interface CliOptions {
 
 const INSTALL_FLAGS = new Set(['--no-install', '--skip-install']);
 
+const sanitizeName = (input?: string): string => {
+  if (!input) {
+    return DEFAULT_PROJECT_NAME;
+  }
+
+  const trimmed = input.trim();
+  return trimmed.length > 0 ? trimmed : DEFAULT_PROJECT_NAME;
+};
+
 export const parseArguments = (argv: string[]): CliOptions => {
   const remaining: string[] = [];
   let install = true;
@@ -24,13 +33,4 @@ export const parseArguments = (argv: string[]): CliOptions => {
   const projectName = sanitizeName(maybeName);
 
   return { projectName, install };
-};
-
-const sanitizeName = (input?: string): string => {
-  if (!input) {
-    return DEFAULT_PROJECT_NAME;
-  }
-
-  const trimmed = input.trim();
-  return trimmed.length > 0 ? trimmed : DEFAULT_PROJECT_NAME;
 };
