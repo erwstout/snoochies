@@ -16,6 +16,19 @@ A small Express + React starter that ships a minimal API and a Vite front-end al
 - `frontend/` — React app powered by Vite with a simple API message card.
 - `eslint.config.js` and `tsconfig.json` — shared linting and TypeScript configuration.
 
+## 🧰 Scaffold anywhere with `npx`
+
+Spin up a fresh project without cloning this repository:
+
+```sh
+npx get-snoochies my-snoochies-app
+```
+
+- Copies the starter template, including Prettier, ESLint, Jest, and TypeScript configs.
+- Prunes repo-only files like `docker-compose.dev.yml`, `.github` workflows, and Husky hooks.
+- Installs dependencies automatically (pass `--no-install` to skip).
+- Updates `package.json` and `package-lock.json` to match your chosen project name.
+
 ## 🚀 Getting started
 
 1. Install dependencies
