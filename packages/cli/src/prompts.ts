@@ -80,11 +80,12 @@ const promptForPackageManager = async (): Promise<PackageManager> => {
 export const collectPromptAnswers = async (defaults: PromptDefaults): Promise<PromptAnswers> => {
   intro('Welcome to the Snoochies starter!');
 
-  const projectName = await promptForText({
+  const projectNameInput = await promptForText({
     message: 'Project name',
     initial: defaults.projectName,
     fallback: DEFAULT_PROJECT_NAME,
   });
+  const projectName = normalizePackageName(projectNameInput);
 
   const description = await promptForText({
     message: 'Project description',
@@ -108,11 +109,11 @@ export const collectPromptAnswers = async (defaults: PromptDefaults): Promise<Pr
 
   const packageManager = await promptForPackageManager();
 
-  outro('Thanks! Applying your answers to the template...');
+  outro(`🚀 Getting started with "${projectName}" — let's build! ✨`);
 
   return {
     projectName,
-    packageName: normalizePackageName(projectName),
+    packageName: projectName,
     description,
     author,
     license,

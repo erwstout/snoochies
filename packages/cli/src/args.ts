@@ -1,4 +1,5 @@
 import { DEFAULT_PROJECT_NAME } from './constants.js';
+import { normalizePackageName } from './project.js';
 
 export interface CliOptions {
   projectName: string;
@@ -7,14 +8,8 @@ export interface CliOptions {
 
 const INSTALL_FLAGS = new Set(['--no-install', '--skip-install']);
 
-const sanitizeName = (input?: string): string => {
-  if (!input) {
-    return DEFAULT_PROJECT_NAME;
-  }
-
-  const trimmed = input.trim();
-  return trimmed.length > 0 ? trimmed : DEFAULT_PROJECT_NAME;
-};
+const sanitizeName = (input?: string): string =>
+  normalizePackageName(input ?? DEFAULT_PROJECT_NAME) || DEFAULT_PROJECT_NAME;
 
 export const parseArguments = (argv: string[]): CliOptions => {
   const remaining: string[] = [];

@@ -28,6 +28,7 @@ npx get-snoochies my-snoochies-app
 - Prunes repo-only files like `docker-compose.dev.yml`, `.github` workflows, and Husky hooks.
 - Installs dependencies automatically (pass `--no-install` to skip).
 - Updates `package.json` and `package-lock.json` to match your chosen project name.
+- Normalizes project names to kebab-case so folders and package names stay safe and consistent.
 
 See [docs/scaffold.md](docs/scaffold.md) for a full walkthrough of the prompts, defaults, emitted files, and package manager choices when running `npx get-snoochies`.
 
@@ -127,12 +128,13 @@ This Compose file is for contributor/local testing only and is not intended to s
 ## 🗄️ Database (Prisma)
 
 - Schema lives in `prisma/schema.prisma` with a starter `Message` model.
+- Prisma config lives in `prisma.config.ts`, which points at `DATABASE_URL` (defaults to `postgresql://postgres:postgres@localhost:5432/snoochies`).
 - Prisma client is generated on install (`npm install` / `npm ci`), but you can rerun via `npm run db:generate`.
 - Develop migrations: `npm run db:migrate` (creates migrations in `prisma/migrations`).
 - Deploy migrations in CI/production: `npm run db:deploy`.
 - Inspect data: `npm run db:studio`.
 - Seed sample data: `npm run db:seed`.
-- `DATABASE_URL` defaults to `postgresql://postgres:postgres@localhost:5432/snoochies`; update it when you connect a real database.
+- Uses Prisma 7 with the PostgreSQL driver adapter (`@prisma/adapter-pg` + `pg`).
 
 ## 🛠️ Useful scripts
 
