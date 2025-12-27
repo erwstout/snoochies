@@ -131,6 +131,7 @@ This Compose file is for contributor/local testing only and is not intended to s
 - Develop migrations: `npm run db:migrate` (creates migrations in `prisma/migrations`).
 - Deploy migrations in CI/production: `npm run db:deploy`.
 - Inspect data: `npm run db:studio`.
+- Seed sample data: `npm run db:seed`.
 - `DATABASE_URL` defaults to `postgresql://postgres:postgres@localhost:5432/snoochies`; update it when you connect a real database.
 
 ## 🛠️ Useful scripts
@@ -140,19 +141,9 @@ This Compose file is for contributor/local testing only and is not intended to s
 - `npm run start` — serve the compiled API from `api/dist`.
 - `npm run typecheck` — run TypeScript type checks for API and frontend.
 - `npm run lint` — ESLint over `api/src` and `frontend/src`.
-- `npm test` — run linting plus tests (frontend uses Vitest; API uses Jest with handler-level tests).
+- `npm test` — run linting plus tests (frontend uses Jest; API uses Jest with handler-level tests).
 - `npm run db:*` — Prisma helpers (generate client, migrate, deploy, studio).
-- Node version: >= 24.11.1 (see `.nvmrc` for local use)
-
-## 🗄️ Database (Prisma)
-
-- Schema lives in `prisma/schema.prisma` with a starter `Message` model.
-- Prisma client is generated on install (`npm install` / `npm ci`), but you can rerun via `npm run db:generate`.
-- Develop migrations: `npm run db:migrate` (creates migrations in `prisma/migrations`).
-- Deploy migrations in CI/production: `npm run db:deploy`.
-- Inspect data: `npm run db:studio`.
-- `DATABASE_URL` defaults to `postgresql://postgres:postgres@localhost:5432/snoochies`; update it when you connect a real database.
-- Seed sample data: `npm run db:seed`.
+- Node version: >= 24.11.1 (see `.nvmrc` for local use).
 
 ## 📦 Scaffold vs. repo-only assets
 

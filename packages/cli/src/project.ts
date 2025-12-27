@@ -79,33 +79,51 @@ export const updateReadmeHeading = async (
   }
 };
 
+const LOCKFILE_BY_PACKAGE_MANAGER: Record<PackageManager, string> = {
+  npm: 'package-lock.json',
+  pnpm: 'pnpm-lock.yaml',
+  yarn: 'yarn.lock',
+};
+
 export const updatePackageLock = async (
   projectPath: string,
   templateValues: ProjectTemplateValues,
 ): Promise<void> => {
-  const lockPath = path.join(projectPath, 'package-lock.json');
+  const lockfiles = Object.values(LOCKFILE_BY_PACKAGE_MANAGER);
+  const activeLockfile = LOCKFILE_BY_PACKAGE_MANAGER[templateValues.packageManager];
 
-  if (templateValues.packageManager !== 'npm') {
-    await fs.rm(lockPath, { force: true });
-    return;
-  }
+  await Promise.all(
+    lockfiles.map(async (lockfile) => {
+      const lockPath = path.join(projectPath, lockfile);
+      const shouldKeep = lockfile === activeLockfile;
 
-  try {
-    const lockfile = await loadJsonFile<Record<string, unknown>>(lockPath);
+      if (!shouldKeep) {
+        await fs.rm(lockPath, { force: true });
+        return;
+      }
 
-    lockfile.name = templateValues.packageName;
-    lockfile.version = '0.1.0';
+      if (templateValues.packageManager !== 'npm') {
+        return;
+      }
 
-    await writeJsonFile(lockPath, lockfile);
-  } catch (unknownError: unknown) {
-    if (!isErrnoException(unknownError)) {
-      throw unknownError;
-    }
+      try {
+        const lockfileContents = await loadJsonFile<Record<string, unknown>>(lockPath);
 
-    if (isEnoentError(unknownError)) {
-      return;
-    }
+        lockfileContents.name = templateValues.packageName;
+        lockfileContents.version = '0.1.0';
 
-    throw unknownError;
-  }
+        await writeJsonFile(lockPath, lockfileContents);
+      } catch (unknownError: unknown) {
+        if (!isErrnoException(unknownError)) {
+          throw unknownError;
+        }
+
+        if (isEnoentError(unknownError)) {
+          return;
+        }
+
+        throw unknownError;
+      }
+    }),
+  );
 };

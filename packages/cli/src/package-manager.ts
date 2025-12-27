@@ -1,35 +1,40 @@
 import { DEFAULT_PACKAGE_MANAGER } from './constants.js';
 
-export type PackageManager = 'npm' | 'pnpm';
+export type PackageManager = 'npm' | 'pnpm' | 'yarn';
 
 const PACKAGE_MANAGER_LABELS: Record<PackageManager, string> = {
   npm: 'npm',
   pnpm: 'pnpm',
+  yarn: 'yarn',
 };
 
 const INSTALL_COMMANDS: Record<PackageManager, string> = {
   npm: 'npm install',
   pnpm: 'pnpm install',
+  yarn: 'yarn install',
 };
 
 const RUN_COMMANDS: Record<PackageManager, string> = {
   npm: 'npm run',
   pnpm: 'pnpm',
+  yarn: 'yarn',
 };
 
 const INSTALL_HINTS: Record<PackageManager, string> = {
   npm: 'npm install',
   pnpm: 'pnpm install',
+  yarn: 'yarn install',
 };
 
 const PACKAGE_MANAGER_VERSION_EXTRACTOR: Partial<Record<PackageManager, () => string | undefined>> =
   {
     npm: () => process.env.npm_config_user_agent?.match(/npm\/([\d.]+)/)?.[1],
+    yarn: () => process.env.npm_config_user_agent?.match(/yarn\/([\d.]+)/)?.[1],
   };
 
 export const resolvePackageManager = (value?: string): PackageManager => {
-  if (value === 'pnpm') {
-    return 'pnpm';
+  if (value === 'pnpm' || value === 'yarn') {
+    return value;
   }
 
   return DEFAULT_PACKAGE_MANAGER;
