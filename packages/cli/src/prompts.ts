@@ -3,12 +3,14 @@ import { cancel, intro, isCancel, outro, select, text } from '@clack/prompts';
 import { DEFAULT_LICENSE, DEFAULT_PROJECT_NAME } from './constants.js';
 import { PackageManager, formatPackageManagerLabel } from './package-manager.js';
 import { normalizePackageName } from './project.js';
+import { TemplateProfile, TEMPLATE_PROFILE_LABELS } from './template-profiles.js';
 
 export interface PromptDefaults {
   projectName: string;
   description?: string;
   author?: string;
   license?: string;
+  templateProfile?: TemplateProfile;
 }
 
 export interface PromptAnswers {
@@ -18,6 +20,7 @@ export interface PromptAnswers {
   author: string;
   license: string;
   packageManager: PackageManager;
+  templateProfile: TemplateProfile;
 }
 
 interface TextPromptConfig {
@@ -77,7 +80,32 @@ const promptForPackageManager = async (): Promise<PackageManager> => {
   return response ?? 'npm';
 };
 
-export const collectPromptAnswers = async (defaults: PromptDefaults): Promise<PromptAnswers> => {
+const promptForTemplateProfile = async (initial?: TemplateProfile): Promise<TemplateProfile> => {
+  const response = await select<TemplateProfile>({
+    message: 'Choose your install mode',
+    options: [
+      { value: 'base', label: TEMPLATE_PROFILE_LABELS.base, hint: 'Default' },
+      {
+        value: 'docker',
+        label: TEMPLATE_PROFILE_LABELS.docker,
+        hint: 'Includes docker-compose.yml',
+      },
+    ],
+    initialValue: initial ?? 'base',
+  });
+
+  if (isCancel(response)) {
+    cancel('Setup cancelled.');
+    process.exit(0);
+  }
+
+  return response ?? 'base';
+};
+
+export const collectPromptAnswers = async (
+  defaults: PromptDefaults,
+  options?: { templateProfileOverride?: TemplateProfile },
+): Promise<PromptAnswers> => {
   intro('Welcome to the Snoochies starter!');
 
   const projectNameInput = await promptForText({
@@ -108,6 +136,8 @@ export const collectPromptAnswers = async (defaults: PromptDefaults): Promise<Pr
   });
 
   const packageManager = await promptForPackageManager();
+  const templateProfile =
+    options?.templateProfileOverride ?? (await promptForTemplateProfile(defaults.templateProfile));
 
   outro(`🚀 Getting started with "${projectName}" — let's build! ✨`);
 
@@ -118,5 +148,6 @@ export const collectPromptAnswers = async (defaults: PromptDefaults): Promise<Pr
     author,
     license,
     packageManager,
+    templateProfile,
   };
 };

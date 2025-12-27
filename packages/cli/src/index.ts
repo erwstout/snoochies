@@ -7,7 +7,12 @@ import { logError, logProgress, logStep, logSuccess, logWarning } from './logger
 import { printNextSteps } from './messages.js';
 import { getInstallCommand } from './package-manager.js';
 import { collectPromptAnswers } from './prompts.js';
-import { resolveRepoRoot, resolveTargetPath, resolveTemplateRoot } from './paths.js';
+import {
+  resolveRepoRoot,
+  resolveTargetPath,
+  resolveTemplateOverlayRoot,
+  resolveTemplateRoot,
+} from './paths.js';
 import {
   ProjectTemplateValues,
   updatePackageLock,
@@ -18,15 +23,19 @@ import { copyTemplate, ensureTargetDirectory, pruneRepoArtifacts } from './scaff
 
 const main = async (): Promise<void> => {
   const options = parseArguments(process.argv.slice(2));
-  const promptAnswers = await collectPromptAnswers({ projectName: options.projectName });
+  const promptAnswers = await collectPromptAnswers(
+    { projectName: options.projectName, templateProfile: options.templateProfile },
+    { templateProfileOverride: options.templateProfile },
+  );
   const repoRoot = resolveRepoRoot();
-  const templateRoot = resolveTemplateRoot(repoRoot);
+  const templateRoot = resolveTemplateRoot(repoRoot, promptAnswers.templateProfile);
+  const overlayRoot = resolveTemplateOverlayRoot(repoRoot, promptAnswers.templateProfile);
   const templateValues: ProjectTemplateValues = {
     ...promptAnswers,
   };
   const targetPath = resolveTargetPath(promptAnswers.projectName);
 
-  const totalSteps = 6 + (options.install ? 1 : 0);
+  const totalSteps = 6 + (options.install ? 1 : 0) + (overlayRoot ? 1 : 0);
   let completedSteps = 0;
 
   const tick = (message: string): void => {
@@ -47,6 +56,10 @@ const main = async (): Promise<void> => {
   tick('Target directory ready');
   await copyTemplate(templateRoot, targetPath);
   tick('Template copied');
+  if (overlayRoot) {
+    await copyTemplate(overlayRoot, targetPath, { skipPaths: [], copyContentsOnly: true });
+    tick('Docker assets copied');
+  }
   await pruneRepoArtifacts(targetPath);
   tick('Preparing files');
   await updatePackageManifest(targetPath, templateValues);
@@ -72,6 +85,7 @@ const main = async (): Promise<void> => {
   printNextSteps(targetPath, {
     install: options.install,
     packageManager: templateValues.packageManager,
+    templateProfile: templateValues.templateProfile,
   });
 };
 

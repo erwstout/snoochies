@@ -21,7 +21,8 @@ A small Express + React starter that ships a minimal API and a Vite front-end al
 Spin up a fresh project without cloning this repository:
 
 ```sh
-npx get-snoochies my-snoochies-app
+npx get-snoochies my-snoochies-app             # Default Node + API layout
+npx get-snoochies my-snoochies-app --with-docker # Adds docker-compose.yml, .dockerignore, and .env.docker.example
 ```
 
 - Copies the starter template, including Prettier, ESLint, Jest, and TypeScript configs.
@@ -29,10 +30,15 @@ npx get-snoochies my-snoochies-app
 - Installs dependencies automatically (pass `--no-install` to skip).
 - Updates `package.json` and `package-lock.json` to match your chosen project name.
 - Normalizes project names to kebab-case so folders and package names stay safe and consistent.
+- Lets you choose between the default Node-only scaffold or a dockerized stack (API + frontend + Postgres) with a `--with-docker` flag or interactive prompt.
 
 See [docs/scaffold.md](docs/scaffold.md) for a full walkthrough of the prompts, defaults, emitted files, and package manager choices when running `npx get-snoochies`.
 
 ## 🚀 Getting started
+
+Choose the install mode that fits your workflow. Both paths keep the API and frontend independent while sharing the same Prisma schema and TypeScript tooling.
+
+### Node-only (default)
 
 1. Install dependencies
 
@@ -40,7 +46,7 @@ See [docs/scaffold.md](docs/scaffold.md) for a full walkthrough of the prompts, 
 npm install
 ```
 
-2. Create an `.env` file in the repo root to configure the API and optional database values. At minimum, set the port (defaults to 3000) and allowed CORS origins (required for cross-origin frontend access). Ports must be numeric and between 1-65535; empty values are rejected.
+2. Create an `.env` file in the repo root. At minimum, set the port (defaults to 3000) and allowed CORS origins (required for cross-origin frontend access). Ports must be numeric and between 1-65535; empty values are rejected.
 
 ```sh
 PORT=3000
@@ -69,6 +75,42 @@ npm run build
 ```sh
 npm run lint
 npm test
+```
+
+### Dockerized stack (use `--with-docker` when scaffolding)
+
+The docker profile emits `docker-compose.yml`, `.dockerignore`, and `.env.docker.example`. It runs the API and frontend in Node containers alongside a Postgres database.
+
+1. Copy the Docker env file and adjust as needed
+
+```sh
+cp .env.docker.example .env.docker
+```
+
+2. Start the stack
+
+```sh
+docker compose up --build
+```
+
+- API: http://localhost:3000
+- Frontend: http://localhost:5173 (talks to `http://api:3000` inside Compose)
+- Database: exposed on port 5432 for admin tools; Prisma points at `postgresql://postgres:postgres@db:5432/snoochies`
+
+3. Run Prisma and tests inside the API container
+
+```sh
+docker compose exec api npm run db:generate
+docker compose exec api npm run typecheck
+docker compose exec api npm test
+# Optional seed hook
+# docker compose exec api npm run db:seed
+```
+
+4. Tear down when finished
+
+```sh
+docker compose down --remove-orphans
 ```
 
 ## 🧭 API overview
