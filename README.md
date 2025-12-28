@@ -14,6 +14,9 @@ A small Express + React starter that ships a minimal API and a Vite front-end al
 
 - `api/` — Express server code, environment parsing, and helpers.
 - `frontend/` — React app powered by Vite with a simple API message card.
+- `packages/cli/` — source for the published `get-snoochies` scaffolder.
+- `templates/` — extra assets the CLI can copy into new projects (e.g., the Docker profile).
+- `docs/` — additional notes about the scaffolder prompts and emitted files.
 - `eslint.config.js` and `tsconfig.json` — shared linting and TypeScript configuration.
 
 ## 🧰 Scaffold anywhere with `npx`
@@ -181,10 +184,10 @@ This Compose file is for contributor/local testing only and is not intended to s
 ## 🛠️ Useful scripts
 
 - `npm run dev` — run API (`api/src/index.ts`) and frontend together.
-- `npm run build` — compile the API and bundle the frontend.
+- `npm run build` — compile the API, build the CLI package, and bundle the frontend.
 - `npm run start` — serve the compiled API from `api/dist`.
-- `npm run typecheck` — run TypeScript type checks for API and frontend.
-- `npm run lint` — ESLint over `api/src` and `frontend/src`.
+- `npm run typecheck` — run TypeScript type checks for the API, frontend, and CLI.
+- `npm run lint` — ESLint over `api/src`, `frontend/src`, and `packages/cli/src`.
 - `npm test` — run linting plus tests (frontend uses Jest; API uses Jest with handler-level tests).
 - `npm run db:*` — Prisma helpers (generate client, migrate, deploy, studio).
 - Node version: >= 24.11.1 (see `.nvmrc` for local use).
@@ -192,7 +195,7 @@ This Compose file is for contributor/local testing only and is not intended to s
 ## 📦 Scaffold vs. repo-only assets
 
 - Shipped in `npx` starter: API + frontend code, Prisma schema, scripts, tests.
-- Repo-only (developer conveniences): `docker-compose.dev.yml`, release workflow, Dependabot config, and other CI/pipeline wiring. These are for maintaining the template and won’t be emitted in generated apps.
+- Repo-only (developer conveniences and scaffolder internals): `packages/` (CLI source), `templates/` (scaffold-only assets), `docker-compose.dev.yml`, CI/release automation, Dependabot config, and coverage artifacts. These are for maintaining the template and won’t be emitted in generated apps.
 
 ## 📄 License
 
