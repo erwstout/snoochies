@@ -14,6 +14,7 @@ export const REPO_ONLY_PATHS = [
   'api/dist',
   'frontend/dist',
   'packages',
+  'templates',
   'coverage',
   '.nyc_output',
   '.tmp',

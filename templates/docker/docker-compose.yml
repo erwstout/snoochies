@@ -1,0 +1,66 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: snoochies_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: snoochies
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d snoochies']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - '5432:5432'
+    volumes:
+      - snoochies_db_data:/var/lib/postgresql/data
+
+  api:
+    image: node:22-bookworm-slim
+    container_name: snoochies_api
+    working_dir: /workspace
+    command: sh -c "npm install && npm run dev:api"
+    env_file:
+      - .env.docker
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@db:5432/snoochies}
+      PORT: ${PORT:-3000}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/workspace
+      - api_node_modules:/workspace/node_modules
+    restart: unless-stopped
+
+  frontend:
+    image: node:22-bookworm-slim
+    container_name: snoochies_frontend
+    working_dir: /workspace
+    command: sh -c "npm install && npm run dev:frontend -- --host 0.0.0.0 --port 5173"
+    env_file:
+      - .env.docker
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://api:3000}
+    depends_on:
+      api:
+        condition: service_started
+    ports:
+      - '5173:5173'
+    volumes:
+      - .:/workspace
+      - frontend_node_modules:/workspace/node_modules
+    restart: unless-stopped
+
+volumes:
+  api_node_modules:
+  frontend_node_modules:
+  snoochies_db_data:

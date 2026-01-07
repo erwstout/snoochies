@@ -2,6 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { TemplateProfile } from './template-profiles.js';
+
 const currentDir = path.dirname(fileURLToPath(new URL('.', import.meta.url)));
 
 const findRepoRoot = (): string => {
@@ -26,7 +28,24 @@ const findRepoRoot = (): string => {
 
 export const resolveRepoRoot = (): string => findRepoRoot();
 
-export const resolveTemplateRoot = (repoRoot: string): string => repoRoot;
+export const resolveTemplateRoot = (repoRoot: string, profile: TemplateProfile): string => {
+  if (profile === 'docker') {
+    return repoRoot;
+  }
+
+  return repoRoot;
+};
+
+export const resolveTemplateOverlayRoot = (
+  repoRoot: string,
+  profile: TemplateProfile,
+): string | undefined => {
+  if (profile !== 'docker') {
+    return undefined;
+  }
+
+  return path.join(repoRoot, 'templates', 'docker');
+};
 
 export const resolveTargetPath = (projectName: string): string =>
   path.resolve(process.cwd(), projectName);

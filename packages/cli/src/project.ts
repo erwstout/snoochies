@@ -4,6 +4,7 @@ import path from 'node:path';
 import { DEFAULT_PROJECT_NAME } from './constants.js';
 import { isEnoentError, isErrnoException } from './error-guards.js';
 import { getPackageManagerFieldValue, PackageManager } from './package-manager.js';
+import { TemplateProfile } from './template-profiles.js';
 
 export interface ProjectTemplateValues {
   projectName: string;
@@ -12,6 +13,7 @@ export interface ProjectTemplateValues {
   author: string;
   license: string;
   packageManager: PackageManager;
+  templateProfile: TemplateProfile;
 }
 
 export const normalizePackageName = (value: string): string => {
