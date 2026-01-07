@@ -1,5 +1,5 @@
 {
-  "name": "snoochies",
+  "name": "get-snoochies",
   "version": "0.0.1",
   "description": "Cute kid. He's yours?",
   "homepage": "https://github.com/erwstout/snoochies#readme",
@@ -10,10 +10,12 @@
     "type": "git",
     "url": "git+https://github.com/erwstout/snoochies.git"
   },
+  "publishConfig": {
+    "tag": "beta"
+  },
   "license": "MIT",
   "author": "Eric Stout <ericwstout@gmail.com>",
   "type": "module",
-  "main": "api/dist/index.js",
   "bin": {
     "get-snoochies": "packages/cli/dist/index.js"
   },
