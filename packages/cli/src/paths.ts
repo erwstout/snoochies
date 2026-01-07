@@ -7,12 +7,13 @@ import { TemplateProfile } from './template-profiles.js';
 const currentDir = path.dirname(fileURLToPath(new URL('.', import.meta.url)));
 
 const findRepoRoot = (): string => {
+  const packageNames = ['get-snoochies', 'snoochies'];
   let dir = currentDir;
   while (true) {
     const candidate = path.join(dir, 'package.json');
     try {
       const pkg = JSON.parse(fs.readFileSync(candidate, 'utf8')) as { name?: string };
-      if (pkg.name === 'snoochies') {
+      if (pkg.name && packageNames.includes(pkg.name)) {
         return dir;
       }
     } catch {
@@ -20,7 +21,9 @@ const findRepoRoot = (): string => {
     }
     const parent = path.dirname(dir);
     if (parent === dir) {
-      throw new Error('Could not locate repository root (package.json with name "snoochies").');
+      throw new Error(
+        'Could not locate repository root (package.json with name "get-snoochies" or "snoochies").',
+      );
     }
     dir = parent;
   }
