@@ -5,7 +5,7 @@ import { parseArguments } from './args.js';
 import { installDependencies } from './install.js';
 import { logError, logProgress, logStep, logSuccess, logWarning } from './logger.js';
 import { printNextSteps } from './messages.js';
-import { getInstallCommand } from './package-manager.js';
+import { getInstallCommand, getRunCommand } from './package-manager.js';
 import { collectPromptAnswers } from './prompts.js';
 import {
   resolveRepoRoot,
@@ -19,6 +19,7 @@ import {
   updatePackageManifest,
   updateReadmeHeading,
 } from './project.js';
+import { generatePrismaClient } from './prisma.js';
 import { copyTemplate, ensureTargetDirectory, pruneRepoArtifacts } from './scaffold.js';
 
 const main = async (): Promise<void> => {
@@ -35,7 +36,7 @@ const main = async (): Promise<void> => {
   };
   const targetPath = resolveTargetPath(promptAnswers.projectName);
 
-  const totalSteps = 6 + (options.install ? 1 : 0) + (overlayRoot ? 1 : 0);
+  const totalSteps = 6 + (options.install ? 2 : 0) + (overlayRoot ? 1 : 0);
   let completedSteps = 0;
 
   const tick = (message: string): void => {
@@ -75,9 +76,13 @@ const main = async (): Promise<void> => {
   if (options.install) {
     await installDependencies(targetPath, templateValues.packageManager);
     tick('Dependencies installed');
+    await generatePrismaClient(targetPath, templateValues.packageManager);
+    tick('Prisma client generated');
   } else {
     const installCommand = getInstallCommand(templateValues.packageManager);
     logWarning(`Skipping dependency installation. Run \`${installCommand}\` before development.`);
+    const runCommand = getRunCommand(templateValues.packageManager);
+    logWarning(`Prisma client not generated. Run \`${runCommand} db:generate\` after installing.`);
   }
 
   logProgress(100, 'Scaffold complete');
