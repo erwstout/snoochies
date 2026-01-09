@@ -21,7 +21,18 @@ export function setupMiddleware(app: Express): void {
 
   app.use(
     helmet({
-      contentSecurityPolicy: env.NODE_ENV === 'production' ? undefined : false,
+      contentSecurityPolicy:
+        env.NODE_ENV === 'production'
+          ? undefined
+          : {
+              useDefaults: true,
+              directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+                styleSrc: ["'self'", "'unsafe-inline'"],
+                imgSrc: ["'self'", 'data:'],
+              },
+            },
     }),
   );
 
