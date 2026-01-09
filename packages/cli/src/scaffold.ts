@@ -1,7 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { REPO_ONLY_PATHS } from './constants.js';
 import { isEnoentError, isErrnoException } from './error-guards.js';
 import { normalizeRelativePath } from './paths.js';
 
@@ -66,7 +65,7 @@ export const copyTemplate = async (
   targetPath: string,
   options?: CopyTemplateOptions,
 ): Promise<void> => {
-  const skipPaths = options?.skipPaths ?? REPO_ONLY_PATHS;
+  const skipPaths = options?.skipPaths ?? [];
 
   if (options?.copyContentsOnly) {
     const entries = await fs.readdir(templateRoot);
@@ -81,25 +80,4 @@ export const copyTemplate = async (
   }
 
   await copyWithFilter(templateRoot, targetPath, templateRoot, skipPaths);
-};
-
-export const pruneRepoArtifacts = async (targetPath: string): Promise<void> => {
-  await Promise.all(
-    REPO_ONLY_PATHS.map(async (entry) => {
-      const candidate = path.join(targetPath, entry);
-      try {
-        await fs.rm(candidate, { recursive: true, force: true });
-      } catch (unknownError: unknown) {
-        if (!isErrnoException(unknownError)) {
-          throw unknownError;
-        }
-
-        if (isEnoentError(unknownError)) {
-          return;
-        }
-
-        throw unknownError;
-      }
-    }),
-  );
 };
