@@ -1,5 +1,5 @@
 {
-  "name": "get-snoochies",
+  "name": "snoochies",
   "version": "0.0.3",
   "description": "Cute kid. He's yours?",
   "homepage": "https://github.com/erwstout/snoochies#readme",
@@ -10,15 +10,9 @@
     "type": "git",
     "url": "git+https://github.com/erwstout/snoochies.git"
   },
-  "publishConfig": {
-    "tag": "beta"
-  },
   "license": "MIT",
   "author": "Eric Stout <ericwstout@gmail.com>",
   "type": "module",
-  "bin": {
-    "get-snoochies": "packages/cli/dist/index.js"
-  },
   "engines": {
     "node": ">=24.11.1"
   },
@@ -40,8 +34,7 @@
     "db:studio": "prisma studio --schema prisma/schema.prisma",
     "start": "node api/dist/index.js",
     "prepare": "husky install",
-    "prepack": "npm run build:cli",
-    "pack:cli": "npm run build:cli && npm pack",
+    "pack:cli": "npm -w get-snoochies run prepack && npm pack -w get-snoochies",
     "format": "prettier --write .",
     "lint": "eslint \"api/src/**/*.{ts,tsx}\" \"frontend/src/**/*.{ts,tsx}\" \"packages/cli/src/**/*.ts\"",
     "test": "npm-run-all lint test:frontend test:api",
@@ -90,7 +83,6 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@clack/prompts": "^0.10.0",
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
     "@tanstack/react-query": "^5.90.12",
@@ -107,5 +99,9 @@
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "zod": "^4.3.4"
-  }
+  },
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
 }
