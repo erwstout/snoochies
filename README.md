@@ -1,5 +1,8 @@
 # 🐄 Snoochies Starter
 
+[![CI (main)](https://github.com/erwstout/snoochies/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/erwstout/snoochies/actions/workflows/ci.yml?query=branch%3Amain)
+[![CI (develop)](https://github.com/erwstout/snoochies/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/erwstout/snoochies/actions/workflows/ci.yml?query=branch%3Adevelop)
+
 A small Express + React starter that ships a minimal API and a Vite front-end already wired together. It is meant for quick prototypes or homelab utilities where you want a typed backend and a simple UI without a lot of ceremony.
 
 ## ✨ What you get
