@@ -17,24 +17,8 @@
     "get-snoochies": "dist/index.js"
   },
   "files": [
-    "api",
-    "docs",
-    "frontend",
-    "prisma",
-    "templates",
     "dist",
-    ".editorconfig",
-    ".env.example",
-    ".nvmrc",
-    ".prettierignore",
-    ".prettierrc",
-    "README.md",
-    "LICENSE",
-    "eslint.config.js",
-    "package.json",
-    "package-lock.json",
-    "prisma.config.ts",
-    "tsconfig.json"
+    "templates/**"
   ],
   "engines": {
     "node": ">=24.11.1"

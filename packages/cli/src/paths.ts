@@ -31,13 +31,8 @@ const findRepoRoot = (): string => {
 
 export const resolveRepoRoot = (): string => findRepoRoot();
 
-export const resolveTemplateRoot = (repoRoot: string, profile: TemplateProfile): string => {
-  if (profile === 'docker') {
-    return repoRoot;
-  }
-
-  return repoRoot;
-};
+export const resolveTemplateRoot = (repoRoot: string): string =>
+  path.join(repoRoot, 'templates', 'base');
 
 export const resolveTemplateOverlayRoot = (
   repoRoot: string,
