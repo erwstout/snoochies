@@ -1,0 +1,10 @@
+{
+  "release-type": "node",
+  "packages": {
+    "packages/cli": {
+      "package-name": "get-snoochies",
+      "release-type": "node",
+      "changelog-path": "packages/cli/CHANGELOG.md"
+    }
+  }
+}
