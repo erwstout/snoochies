@@ -19,11 +19,7 @@ export function setupMiddleware(app: Express): void {
 
   app.disable('x-powered-by');
 
-  app.use(
-    helmet({
-      contentSecurityPolicy: env.NODE_ENV === 'production' ? undefined : false,
-    }),
-  );
+  app.use(helmet());
 
   app.use(
     cors({
