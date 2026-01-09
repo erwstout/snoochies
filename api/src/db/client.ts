@@ -5,7 +5,8 @@ import { Pool } from 'pg';
 const DATABASE_URL =
   process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@localhost:5432/snoochies';
 
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient; pool?: Pool };
+type GlobalWithPrisma = typeof globalThis & { prisma?: PrismaClient; pool?: Pool };
+const globalForPrisma: GlobalWithPrisma = globalThis as GlobalWithPrisma;
 
 const getAdapter = (): PrismaPg => {
   if (!globalForPrisma.pool) {
