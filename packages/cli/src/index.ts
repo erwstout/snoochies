@@ -20,7 +20,7 @@ import {
   updateReadmeHeading,
 } from './project.js';
 import { generatePrismaClient } from './prisma.js';
-import { copyTemplate, ensureTargetDirectory, pruneRepoArtifacts } from './scaffold.js';
+import { copyTemplate, ensureTargetDirectory } from './scaffold.js';
 
 const main = async (): Promise<void> => {
   const options = parseArguments(process.argv.slice(2));
@@ -29,14 +29,14 @@ const main = async (): Promise<void> => {
     { templateProfileOverride: options.templateProfile },
   );
   const repoRoot = resolveRepoRoot();
-  const templateRoot = resolveTemplateRoot(repoRoot, promptAnswers.templateProfile);
+  const templateRoot = resolveTemplateRoot(repoRoot);
   const overlayRoot = resolveTemplateOverlayRoot(repoRoot, promptAnswers.templateProfile);
   const templateValues: ProjectTemplateValues = {
     ...promptAnswers,
   };
   const targetPath = resolveTargetPath(promptAnswers.projectName);
 
-  const totalSteps = 6 + (options.install ? 2 : 0) + (overlayRoot ? 1 : 0);
+  const totalSteps = 5 + (options.install ? 2 : 0) + (overlayRoot ? 1 : 0);
   let completedSteps = 0;
 
   const tick = (message: string): void => {
@@ -61,8 +61,6 @@ const main = async (): Promise<void> => {
     await copyTemplate(overlayRoot, targetPath, { skipPaths: [], copyContentsOnly: true });
     tick('Docker assets copied');
   }
-  await pruneRepoArtifacts(targetPath);
-  tick('Preparing files');
   await updatePackageManifest(targetPath, templateValues);
   tick('package.json updated');
   await updatePackageLock(targetPath, templateValues);

@@ -1,0 +1,22 @@
+node_modules
+dist
+api/dist
+frontend/dist
+
+# Env and secrets
+.env
+.env.*.local
+.env.local
+.npmrc
+
+# Logs and coverage
+*.log
+logs
+coverage
+.nyc_output
+
+# Editor/OS cruft
+.DS_Store
+.vscode
+.idea
+.tmp

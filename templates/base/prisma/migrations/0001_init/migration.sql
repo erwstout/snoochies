@@ -1,0 +1,6 @@
+-- CreateTable
+CREATE TABLE "Message" (
+    "id" SERIAL PRIMARY KEY,
+    "text" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
