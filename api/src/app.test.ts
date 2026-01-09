@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import { jest, describe, expect, test, beforeEach } from '@jest/globals';
 import type { Request, RequestHandler, Response } from 'express';
 import type { ZodSchema } from 'zod';
