@@ -23,10 +23,9 @@ export const readyzHandler = async (_req: Request, res: Response): Promise<void>
     const db = getDb();
     await db.$queryRaw`SELECT 1`;
     res.status(200).json({ status: 'ready' });
-  } catch (err) {
-    res
-      .status(503)
-      .json({ status: 'degraded', error: (err as Error)?.message ?? 'db check failed' });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'db check failed';
+    res.status(503).json({ status: 'degraded', error: message });
   }
 };
 app.get('/readyz', readyzHandler);
