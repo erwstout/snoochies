@@ -1,0 +1,52 @@
+{
+  "name": "get-snoochies",
+  "version": "0.0.3",
+  "description": "Cute kid. He's yours?",
+  "homepage": "https://github.com/erwstout/snoochies#readme",
+  "bugs": {
+    "url": "https://github.com/erwstout/snoochies/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erwstout/snoochies.git"
+  },
+  "license": "MIT",
+  "author": "Eric Stout <ericwstout@gmail.com>",
+  "type": "module",
+  "bin": {
+    "get-snoochies": "dist/index.js"
+  },
+  "files": [
+    "api",
+    "docs",
+    "frontend",
+    "prisma",
+    "templates",
+    "dist",
+    ".editorconfig",
+    ".env.example",
+    ".nvmrc",
+    ".prettierignore",
+    ".prettierrc",
+    "README.md",
+    "LICENSE",
+    "eslint.config.js",
+    "package.json",
+    "package-lock.json",
+    "prisma.config.ts",
+    "tsconfig.json"
+  ],
+  "engines": {
+    "node": ">=24.11.1"
+  },
+  "publishConfig": {
+    "tag": "beta"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.10.0"
+  }
+}
