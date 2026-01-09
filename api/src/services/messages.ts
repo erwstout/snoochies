@@ -8,13 +8,15 @@ interface MessageService {
 export const messageService: MessageService = {
   listMessages: async () => {
     const db = getDb();
-    return db.message.findMany({ orderBy: { createdAt: 'desc' } });
+    const messages = await db.message.findMany({ orderBy: { createdAt: 'desc' } });
+    return messages;
   },
   createMessage: async (text: string) => {
     const db = getDb();
-    return db.message.create({
+    const created = await db.message.create({
       data: { text },
     });
+    return created;
   },
 };
 

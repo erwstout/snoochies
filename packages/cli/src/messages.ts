@@ -34,11 +34,16 @@ export const printNextSteps = (
 
   if (!options.install) {
     console.log(`  2. ${installHint}`);
-    console.log(`  3. cp .env.example .env && ${runCommand} dev`);
-  } else {
-    console.log('  2. cp .env.example .env');
-    console.log(`  3. ${runCommand} dev`);
+    console.log(`  3. ${runCommand} db:generate`);
+    console.log(`  4. cp .env.example .env && ${runCommand} dev`);
+    console.log(`  5. ${runCommand} test`);
+    console.log(`  6. ${runCommand} lint`);
+    return;
   }
+
+  console.log('  2. cp .env.example .env');
+  console.log(`  3. ${runCommand} dev`);
   console.log(`  4. ${runCommand} test`);
   console.log(`  5. ${runCommand} lint`);
+  console.log(`  6. ${runCommand} db:generate # rerun after Prisma schema changes`);
 };
