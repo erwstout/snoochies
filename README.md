@@ -16,8 +16,9 @@ A small Express + React starter that ships a minimal API and a Vite front-end al
 - `frontend/` — React app powered by Vite with a simple API message card.
 - `packages/cli/` — source for the published `get-snoochies` scaffolder.
 - `templates/` — extra assets the CLI can copy into new projects (e.g., the Docker profile).
+- `prisma/` — shared Prisma schema, migrations, and seed data.
 - `docs/` — additional notes about the scaffolder prompts and emitted files.
-- `eslint.config.js` and `tsconfig.json` — shared linting and TypeScript configuration.
+- `eslint.config.js`, `tsconfig.json`, and `prettier` config — shared tooling at the repo root, referenced by the API, frontend, and CLI.
 
 ## 🧰 Scaffold anywhere with `npx`
 
@@ -39,7 +40,7 @@ See [docs/scaffold.md](docs/scaffold.md) for a full walkthrough of the prompts, 
 
 ## 🚀 Getting started
 
-Choose the install mode that fits your workflow. Both paths keep the API and frontend independent while sharing the same Prisma schema and TypeScript tooling.
+Choose the install mode that fits your workflow. The API, frontend, and CLI are now separated into their own folders while still sharing Prisma, TypeScript, ESLint, and Prettier tooling from the repo root.
 
 ### Node-only (default)
 
